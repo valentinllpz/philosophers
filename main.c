@@ -30,10 +30,10 @@ int	exit_error(int err_no)
 void	print_msg(int flag, int start, int id)
 {
 	int				timestamp;
-	pthread_mutex_t lock;
+//	pthread_mutex_t lock;
 
-	pthread_mutex_init(&lock, NULL);
-	pthread_mutex_lock(&lock);
+//	pthread_mutex_init(&lock, NULL);
+//	pthread_mutex_lock(&lock);
 	timestamp = gettime_in_ms() - start;
 	if (flag == 0)
 		printf("[%i ms] Philosopher no %i died\n", timestamp, id);
@@ -45,23 +45,21 @@ void	print_msg(int flag, int start, int id)
 		printf("[%i ms] Philosopher no %i is sleeping\n", timestamp, id);
 	else if (flag == 4)
 		printf("[%i ms] Philosopher no %i is thinking\n", timestamp, id);
-	pthread_mutex_unlock(&lock);
+//	pthread_mutex_unlock(&lock);
 }
 
-void	watch_death(t_philo *philo, t_info *info)
+int	death(t_philo *philo, t_info *info)
 {
 	int				timestamp;
-	pthread_mutex_t lock;
 
 	timestamp = gettime_in_ms() - info->start;
 	if (info->time_to_die <= timestamp - philo->last_meal_ts)
 	{
-		pthread_mutex_init(&lock, NULL);
-		pthread_mutex_lock(&lock);
 		print_msg(0, info->start, philo->id);
 		info->death = 1;
-		pthread_mutex_unlock(&lock);
+		return (1);
 	}
+	return (0);
 }
 
 void	thinking(t_philo *philo, t_info *info)
@@ -80,11 +78,13 @@ void	eating(t_philo *philo, t_info *info)
 {
 	pthread_mutex_lock(&(philo->fork));
 	pthread_mutex_lock(philo->next_fork);
+	philo->meal_nb++;
+	pthread_mutex_lock(&(philo->info->death_lock));
+	philo->last_meal_ts = gettime_in_ms() - info->start;
+	pthread_mutex_unlock(&(philo->info->death_lock));
 	print_msg(1, info->start, philo->id);
 	print_msg(2, info->start, philo->id);
 	waiting(info->time_to_eat);
-	philo->meal_nb++;
-	philo->last_meal_ts = gettime_in_ms() - info->start;
 	pthread_mutex_unlock(&(philo->fork));
 	pthread_mutex_unlock(philo->next_fork);
 }
@@ -96,13 +96,14 @@ void	*life_cycle(void *ptr)
 	philo = (t_philo *)ptr;
 	while (philo->meal_nb != philo->info->max_meal_nb)
 	{
-		if (!philo->info->death)
-			eating(philo, philo->info);
-		if (!philo->info->death)
-			sleeping(philo, philo->info);
-		if (!philo->info->death)
-			thinking(philo, philo->info);
+		eating(philo, philo->info);
+
+		sleeping(philo, philo->info);
+
+		thinking(philo, philo->info);
+
 	}
+	pthread_mutex_unlock(&(philo->info->death_lock));
 	return (NULL);
 }
 
@@ -125,14 +126,22 @@ int	philosophers(pthread_t *thread, t_philo **philo, t_info *info)
 	if (!start_threads(thread, philo, info, 0) || !start_threads(thread, philo, info, 1))
 		return (0);
 	i = 0;
-	while (!info->death)
+	while (i < info->philo_nb)
 	{
-		watch_death(philo[i], info);
+		pthread_mutex_lock(&(info->death_lock));
+		death(philo[i], info);
+		if (info->death)
+		{
+			pthread_mutex_unlock(&(info->death_lock));
+			i = 0;
+			break ;
+		}
+		pthread_mutex_unlock(&(info->death_lock));
 		i++;
 		if (i == info->philo_nb)
-		i = 0;
+			i = 0;
 	}
-	i = 0;
+
 	while (i < info->philo_nb)
 	{
 		if (pthread_join(thread[i], NULL))

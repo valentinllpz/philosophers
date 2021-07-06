@@ -30,6 +30,7 @@ t_info	*init_info_struct(int ac, char **av)
 	if (info->philo_nb < 0 || info->time_to_die < 0 || info->time_to_eat < 0
 		|| info->time_to_sleep < 0) // faire ailleurs pour les retours erreur
 		return (NULL);
+	pthread_mutex_init(&(info->death_lock), NULL);
 	return (info);
 }
 

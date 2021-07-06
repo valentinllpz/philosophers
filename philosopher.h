@@ -28,6 +28,7 @@ typedef struct s_info
 	int	max_meal_nb;
 	int	start;
 	int	death;
+	pthread_mutex_t death_lock;
 }				t_info;
 
 typedef struct	s_philo
