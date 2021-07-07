@@ -6,13 +6,13 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/02 16:35:14 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/05 20:09:24 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/07 12:01:41 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-int	gettime_in_ms()
+int	get_current_time_ms()
 {
 	struct timeval time;
 
@@ -21,15 +21,16 @@ int	gettime_in_ms()
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-void	waiting(int time)
+void	waiting(int start, int wait_from, int time_to_wait)
 {
-	int count;
-	
-	time *= 1000;
-	count = 0;
-	while (count < time)
+	int goal;
+	int	timestamp;
+
+	goal = time_to_wait + wait_from;
+	timestamp = get_current_time_ms() - start;
+	while (timestamp < goal)
 	{
-		usleep(420); // check if -1 returned
-		count += 420;
+		usleep(100); // check if -1 returned
+		timestamp = get_current_time_ms() - start;
 	}
 }

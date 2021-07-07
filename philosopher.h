@@ -6,7 +6,7 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 16:09:08 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/05 18:39:17 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/07 11:14:14 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,16 @@ t_philo		**init_philo_struct(t_info *info);
 pthread_t 	*init_threads_array(int philo_nb);
 
 //time
-int			gettime_in_ms();
-void		waiting(int time);
+int			get_current_time_ms();
+void		waiting(int start, int wait_from, int time_to_wait);
 
 //utils
 int			ft_atoi(const char *str);
 void		ft_bzero(void *s, size_t n);
 void		*ft_calloc(size_t count, size_t size);
 
+//display.c
+void	print_msg(int flag, int start, int id);
 
 
 // get time soustraction temps present - start
