@@ -6,68 +6,23 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:13:20 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/07 17:11:02 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/07 20:16:22 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
-/*
-void	end_simulation(t_philo **philo, t_info *info)
+
+int	exit_error(int err_type)
 {
-	int	i;
-	int	stop;
-
-	i = 0;
-	stop = 0;
-	while (!stop && !death(philo[i], info))
+	if (err_type == 1)
 	{
-		pthread_mutex_lock(&(info->death_lock));
-		if (info->done == info->philo_nb)
-			stop = 1;
-		pthread_mutex_unlock(&(info->death_lock));
-		i++;
-		if (i == info->philo_nb)
-			i = 0;
-	}	
-}
-*/
-int	start_threads(pthread_t *thread, t_philo **philo, t_info *info)
-{
-	int		i;
-
-	i = 0;
-	info->start = get_current_time_ms();
-	while (i < info->philo_nb)
-	{
-		if (pthread_create(&thread[i], NULL, life_cycle, philo[i]))
-			return (0);
-		i += 2;
+		write(2, "philo: usage error: arguments should be a ", 44);
+		write(2, "[number_of_philosophers] [time_to_die] [time_to_eat] ", 55);
+		write(2, "[time_to_sleep] and optionally [number_of_times_each_", 55);
+		write(2, "philosopher_must_eat]. Negative values are not accepted\n", 58);
 	}
-	usleep(100);
-	i = 1;
-	while (i < info->philo_nb)
-	{
-		if (pthread_create(&thread[i], NULL, life_cycle, philo[i]))
-			return (0);
-		i += 2;
-	}
-	return (1);
-}
-
-int	philosophers(pthread_t *thread, t_philo **philo, t_info *info)
-{
-	int		i;
-
-	if (!start_threads(thread, philo, info))
-		return (0);
-	i = 0;
-//	end_simulation(philo, info);
-	while (i < info->philo_nb)
-	{
-		if (pthread_join(thread[i], NULL))
-			return (0);
-		i++;
-	}
+	else if (err_type == 2)
+		write(2, "philo: program exited due to an error\n", 39);
 	return (1);
 }
 
@@ -76,19 +31,28 @@ int	main(int ac, char **av)
 	pthread_t 	*thread;
 	t_philo 	**philo;
 	t_info		*info;
-	int			ret;
 
 	if (!(ac == 5 || ac == 6))
-		return (1);
+		return (exit_error(1));
 	info = init_info_struct(ac, av);
 	if (!info)
 		return (1);
-	philo = init_philo_struct(info);
+/*	if (info->philo_nb < 0 || info->time_to_die < 0 || info->time_to_eat < 0
+		|| info->time_to_sleep < 0 || info->max_meal_nb < 0)
+		return (exit_error(1));
+*/	philo = init_philo_struct(info);
 	if (!philo)
 		return (1);
 	thread = init_threads_array(info->philo_nb);
 	if (!thread)
 		return (1);
-	ret = philosophers(thread, philo, info); // print error message
+	if (!start_threads(thread, philo, info))
+		return (0); // print error message
+	if (!join_threads(thread, philo, info))
+		return (0); // print error message
 	return (0);
 }
+
+// philo 1 
+// pas plus de 200
+// free

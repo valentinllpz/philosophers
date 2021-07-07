@@ -6,7 +6,7 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/02 12:03:37 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/07 17:11:02 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/07 20:17:05 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,27 @@ t_info	*init_info_struct(int ac, char **av)
 		info->max_meal_nb = ft_atoi(av[5]);
 	else
 		info->max_meal_nb = -1;
-	if (info->philo_nb < 0 || info->time_to_die < 0 || info->time_to_eat < 0
-		|| info->time_to_sleep < 0) // faire ailleurs pour les retours erreur
+	if (pthread_mutex_init(&(info->death_lock), NULL) != 0)
 		return (NULL);
-	pthread_mutex_init(&(info->death_lock), NULL);
 	return (info);
+}
+
+int	init_forks_mutex(t_philo **philo)
+{
+	int		i;
+
+	i = 0;
+	while (philo[i])
+	{
+		if (pthread_mutex_init(&(philo[i]->fork), NULL))
+			return (0);
+		if (philo[i + 1])
+			philo[i]->next_fork = &(philo[i + 1]->fork);
+		else
+			philo[i]->next_fork = &(philo[0]->fork);
+		i++;
+	}
+	return (1);
 }
 
 t_philo	**init_philo_struct(t_info *info)
@@ -42,7 +58,6 @@ t_philo	**init_philo_struct(t_info *info)
 	philo = ft_calloc(info->philo_nb + 1, sizeof(t_philo *));
 	if (!philo)
 		return (NULL);
-	philo[info->philo_nb] = NULL; // pas besoin si calloc
 	i = 0;
 	while (i < info->philo_nb)
 	{
@@ -53,17 +68,8 @@ t_philo	**init_philo_struct(t_info *info)
 		philo[i]->info = info;
 		i++;
 	}
-	i = 0;
-	while (philo[i])
-	{
-		if (pthread_mutex_init(&(philo[i]->fork), NULL))
-			return (NULL);
-		if (philo[i + 1])
-			philo[i]->next_fork = &(philo[i + 1]->fork);
-		else
-			philo[i]->next_fork = &(philo[0]->fork);
-		i++;
-	}
+	if (!init_forks_mutex(philo))
+		return (NULL);
 	return (philo);
 }
 

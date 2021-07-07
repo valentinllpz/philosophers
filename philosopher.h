@@ -6,7 +6,7 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 16:09:08 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/07 17:11:02 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/07 19:17:20 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,11 @@ pthread_t 	*init_threads_array(int philo_nb);
 int			get_current_time_ms();
 void		waiting(int start, int wait_from, int time_to_wait);
 
-//life.c
+// threads
+int	start_threads(pthread_t *thread, t_philo **philo, t_info *info);
+int	join_threads(pthread_t *thread, t_philo **philo, t_info *info);
 
+//life.c
 void	*life_cycle(void *ptr);
 int		eating(t_philo *philo, t_info *info);
 int		sleeping(t_philo *philo, t_info *info);
