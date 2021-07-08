@@ -6,7 +6,7 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/07 10:23:31 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/08 17:45:58 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/08 19:24:27 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	exit_error(int err_type)
 
 void	print_msg(int flag, t_philo *philo, int timestamp)
 {
-	pthread_mutex_lock(&(philo->info->print_lock));
+	pthread_mutex_lock(&(philo->info->print));
 	if (flag == 0)
 		printf("[%i ms] %i died\n", timestamp, philo->id);
 	else if (flag == 1)
@@ -42,5 +42,5 @@ void	print_msg(int flag, t_philo *philo, int timestamp)
 		printf("[%i ms] %i is sleeping\n", timestamp, philo->id);
 	else if (flag == 4)
 		printf("[%i ms] %i is thinking\n", timestamp, philo->id);
-	pthread_mutex_unlock(&(philo->info->print_lock));
+	pthread_mutex_unlock(&(philo->info->print));
 }

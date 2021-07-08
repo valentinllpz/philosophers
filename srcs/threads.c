@@ -6,11 +6,36 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/07 17:19:01 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/08 16:25:44 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/08 19:24:07 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
+
+int	everyone_ate(t_info *info)
+{
+	pthread_mutex_lock(&(info->stop));
+	if (info->done == info->philo_nb)
+	{
+		pthread_mutex_unlock(&(info->stop));
+		return (1);
+	}
+	pthread_mutex_unlock(&(info->stop));
+	return (0);
+}
+
+void	finish_threads(t_philo **philo, t_info *info)
+{
+	int		i;
+
+	i = 0;
+	while (!death(philo[i], info, get_current_time_ms() - info->start) || everyone_ate(info))
+	{
+		i++;
+		if (i == info->philo_nb)
+			i = 0;
+	}
+}
 
 int	start_threads(pthread_t *threads, t_philo **philo, t_info *info)
 {
@@ -32,6 +57,7 @@ int	start_threads(pthread_t *threads, t_philo **philo, t_info *info)
 			return (0);
 		i += 2;
 	}
+	finish_threads(philo, info);
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 16:09:08 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/08 17:33:47 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/08 19:24:27 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,11 @@ typedef struct s_info
 	int				time_to_sleep;
 	int				max_meal_nb;
 	int				start;
+	int				done;
 	int				death;
-	pthread_mutex_t	death_lock;
-	pthread_mutex_t	print_lock;
+//	pthread_mutex_t	done_lock;
+	pthread_mutex_t	stop;
+	pthread_mutex_t	print;
 }				t_info;
 
 typedef struct s_philo

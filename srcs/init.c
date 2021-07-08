@@ -6,7 +6,7 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/02 12:03:37 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/08 17:40:04 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/08 19:24:27 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ t_info	*init_info_struct(int ac, char **av)
 		info->max_meal_nb = ft_atoi(av[5]);
 	else
 		info->max_meal_nb = -1;
-	if (pthread_mutex_init(&(info->death_lock), NULL) != 0
-		|| pthread_mutex_init(&(info->print_lock), NULL) != 0)
+	if (pthread_mutex_init(&(info->stop), NULL) != 0
+		|| pthread_mutex_init(&(info->print), NULL) != 0)
 	{
 		free(info);
 		return (NULL);

@@ -6,7 +6,7 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 16:04:44 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/08 17:42:40 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/08 19:24:07 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	*free_all(t_philo **philo, t_info *info, pthread_t *threads)
 
 	if (info)
 	{
-		pthread_mutex_destroy(&(info->death_lock));
+		pthread_mutex_destroy(&(info->stop));
 		free(info);
 	}
 	if (philo)
