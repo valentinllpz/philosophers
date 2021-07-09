@@ -6,7 +6,7 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 16:04:44 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/08 19:24:07 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/09 12:58:58 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	*free_all(t_philo **philo, t_info *info, pthread_t *threads)
 	if (info)
 	{
 		pthread_mutex_destroy(&(info->stop));
+		pthread_mutex_destroy(&(info->print));
 		free(info);
 	}
 	if (philo)
@@ -60,9 +61,10 @@ int	let_philo_die(t_philo *philo, t_info *info)
 	int		timestamp;
 
 	timestamp = get_current_time_ms() - info->start;
-	print_msg(1, philo, timestamp);
 	waiting(info->start, timestamp, info->time_to_die);
-	death(philo, info, get_current_time_ms() - info->start);
+	pthread_mutex_unlock(&(philo->fork));
+	timestamp = get_current_time_ms() - info->start;
+	stop_simulation(philo, info, timestamp);
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 16:09:08 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/08 19:24:27 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/09 12:57:25 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ typedef struct s_info
 	int				start;
 	int				done;
 	int				death;
-//	pthread_mutex_t	done_lock;
 	pthread_mutex_t	stop;
 	pthread_mutex_t	print;
 }				t_info;
@@ -49,7 +48,7 @@ t_philo		**init_philo_struct(t_info *info);
 pthread_t	*init_threads_array(int philo_nb, t_philo **philo, t_info *info);
 
 int			start_threads(pthread_t *thread, t_philo **philo, t_info *info);
-int			join_threads(pthread_t *thread, t_info *info);
+int			finish_threads(pthread_t *thread, t_philo **philo, t_info *info);
 
 int			get_current_time_ms(void);
 void		waiting(int start, int wait_from, int time_to_wait);
@@ -58,7 +57,7 @@ void		*life_cycle(void *ptr);
 int			eating(t_philo *philo, t_info *info);
 int			sleeping(t_philo *philo, t_info *info);
 int			thinking(t_philo *philo, t_info *info);
-int			death(t_philo *philo, t_info *info, int timestamp);
+int			stop_simulation(t_philo *philo, t_info *info, int timestamp);
 
 void		*free_all(t_philo **philo, t_info *info, pthread_t *threads);
 int			usage_error(int ac, char **av);

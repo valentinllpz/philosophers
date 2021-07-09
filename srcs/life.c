@@ -6,13 +6,13 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/07 14:06:25 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/08 19:24:07 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/09 12:58:30 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-int	death(t_philo *philo, t_info *info, int timestamp)
+int	stop_simulation(t_philo *philo, t_info *info, int timestamp)
 {
 	pthread_mutex_lock(&(info->stop));
 	if (info->death == 1)
@@ -20,11 +20,17 @@ int	death(t_philo *philo, t_info *info, int timestamp)
 		pthread_mutex_unlock(&(info->stop));
 		return (1);
 	}
-	else if (info->time_to_die <= timestamp - philo->last_meal_ts)
+	else if (info->time_to_die <= timestamp - philo->last_meal_ts
+		&& philo->meal_nb != info->max_meal_nb)
 	{
 		info->death = 1;
 		pthread_mutex_unlock(&(info->stop));
 		print_msg(0, philo, timestamp);
+		return (1);
+	}
+	if (info->done == info->philo_nb)
+	{
+		pthread_mutex_unlock(&(info->stop));
 		return (1);
 	}
 	pthread_mutex_unlock(&(info->stop));
@@ -36,7 +42,7 @@ int	thinking(t_philo *philo, t_info *info)
 	int				timestamp;
 
 	timestamp = get_current_time_ms() - info->start;
-	if (death(philo, info, timestamp))
+	if (stop_simulation(philo, info, timestamp))
 		return (0);
 	print_msg(4, philo, timestamp);
 	return (1);
@@ -47,7 +53,7 @@ int	sleeping(t_philo *philo, t_info *info)
 	int				timestamp;
 
 	timestamp = get_current_time_ms() - info->start;
-	if (death(philo, info, timestamp))
+	if (stop_simulation(philo, info, timestamp))
 		return (0);
 	print_msg(3, philo, timestamp);
 	waiting(info->start, timestamp, info->time_to_sleep);
@@ -59,13 +65,16 @@ int	eating(t_philo *philo, t_info *info)
 	int				timestamp;
 
 	pthread_mutex_lock(&(philo->fork));
-	if (!philo->next_fork)
-		let_philo_die(philo, info);
-	pthread_mutex_lock(philo->next_fork);
 	timestamp = get_current_time_ms() - info->start;
-	if (death(philo, info, timestamp))
+	if (stop_simulation(philo, info, timestamp))
 		return (0);
 	print_msg(1, philo, timestamp);
+	if (!philo->next_fork)
+		return (let_philo_die(philo, info));
+	pthread_mutex_lock(philo->next_fork);
+	timestamp = get_current_time_ms() - info->start;
+	if (stop_simulation(philo, info, timestamp))
+		return (0);
 	print_msg(1, philo, timestamp);
 	pthread_mutex_lock(&(philo->info->stop));
 	philo->last_meal_ts = timestamp;

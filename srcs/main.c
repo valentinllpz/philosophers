@@ -6,7 +6,7 @@
 /*   By: vlugand- <vlugand-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:13:20 by vlugand-          #+#    #+#             */
-/*   Updated: 2021/07/08 16:26:10 by vlugand-         ###   ########.fr       */
+/*   Updated: 2021/07/09 12:08:03 by vlugand-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ int	main(int ac, char **av)
 	threads = init_threads_array(info->philo_nb, philo, info);
 	if (!threads)
 		return (exit_error(2));
-	if (!start_threads(threads, philo, info) || !join_threads(threads, info))
+	if (!start_threads(threads, philo, info)
+		|| !finish_threads(threads, philo, info))
 	{
 		free_all(philo, info, threads);
 		return (exit_error(3));
