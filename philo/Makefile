@@ -31,7 +31,7 @@ all:		${NAME}
 			${CC} ${CFLAGS} -I includes -c $< -o ${<:.c=.o}
 
 ${NAME}:	${OBJS}
-			${CC} ${CFLAGS} ${OBJS} -o ${NAME}
+			${CC} ${CFLAGS} ${OBJS} -lpthread -o ${NAME}
 			@echo "\033[0;32m\033[1mphilo_one is now ready!\033[0m"
 			@echo ""
 			@echo "\033[92m██████  ██   ██ ██ ██       ██████  ███████  ██████  ██████  ██   ██ ███████ ██████  ███████ "
