@@ -2,7 +2,7 @@
 
 ![demo](demo.gif)
 
-This [42](https://42.fr/en/homepage/) project is an introduction to [multithreading](https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)) and processes, and how to work on a shared memory space.
+This [42](https://42.fr/en/homepage/) project is an introduction to [multithreading](https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)) and processes, and how to work on a shared memory space in C.
 The goal here is to use [mutual exclusion](https://en.wikipedia.org/wiki/Mutual_exclusion) and [semaphores](https://en.wikipedia.org/wiki/Semaphore_(programming)) to avoid concurrency issues.
 
 ### The simulation 
